@@ -83,13 +83,13 @@ func SetupRoutes(r *mux.Router, db *sqlx.DB) {
 	r.HandleFunc("/books", func(w http.ResponseWriter, r *http.Request){
 		w.Header().Set("Content-Type", "application/json")
 		var createBook CreateBook
+		
 		err := json.NewDecoder(r.Body).Decode(&createBook)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
 			return
 		}
-		
 
 		// DB Transaction
 		tx, err := db.Begin()
@@ -98,47 +98,38 @@ func SetupRoutes(r *mux.Router, db *sqlx.DB) {
 			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
 			return
 		}
-		defer tx.Rollback()
 		
-		// Prepare INSERT
-		stmt, err := tx.Prepare("INSERT INTO Books(title, author) VALUES(?, ?)")
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
-			return
-		}
-		defer stmt.Close()
+		// Transaction Rollback
+		var txErr error
+		defer func() {
+			if txErr != nil {
+				tx.Rollback()
+			}
+		}()
+
+		// INSERT with RETURNING - use proper placeholders and scan all fields
+		var book Book
+		txErr = tx.QueryRow(
+			"INSERT INTO Books(title, author) VALUES($1, $2) RETURNING id, title, author", 
+			createBook.Title, createBook.Author,
+		).Scan(&book.ID, &book.Title, &book.Author)
 		
-		// Execute INSERT
-		result, err := stmt.Exec(createBook.Title, createBook.Author)
-		if err != nil {
+		if txErr != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+			json.NewEncoder(w).Encode(ErrorResponse{Error: txErr.Error()})
 			return
 		}
 		
 		// Commit Transaction
-		if err := tx.Commit(); err != nil {
+		txErr = tx.Commit()
+		if txErr != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+			json.NewEncoder(w).Encode(ErrorResponse{Error: txErr.Error()})
 			return
 		}
 
 		// Response
-		id, err := result.LastInsertId()
-		if err != nil {
-			log.Fatal(err)
-		}
-		
-		// Resconstruct JSON object
-		book := Book{
-			ID:     int(id),
-			Title:  createBook.Title,
-			Author: createBook.Author,
-		}
-
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(book)
-
 	}).Methods("POST")
 }
