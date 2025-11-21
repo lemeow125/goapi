@@ -8,7 +8,9 @@ import (
 )
 
 func SetupRoutes(r *mux.Router) {
-	r.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request){
-		fmt.Fprint(w, "Hello world!")
+	r.HandleFunc("/hello/{name}", func(w http.ResponseWriter, r *http.Request){
+		vars := mux.Vars(r)
+		name := vars["name"]
+		fmt.Fprintf(w, "Hello %s!", name)
 	})
 }
