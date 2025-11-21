@@ -168,3 +168,6 @@ uploads/
 static/
 TODO.md
 schema.yml
+
+# Golang
+__debug*
