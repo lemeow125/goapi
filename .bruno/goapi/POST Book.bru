@@ -1,0 +1,18 @@
+meta {
+  name: POST Book
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/v1/books
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "Keannu",
+    "author": "Test Book"
+  }
+}

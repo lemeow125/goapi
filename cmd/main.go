@@ -15,8 +15,8 @@ func main(){
 	}
 
 	// Migrations
-	migrations.Setup()
+	db := migrations.Setup()
 
 	// Start API
-	api.Run()
+	api.Run(db)
 }

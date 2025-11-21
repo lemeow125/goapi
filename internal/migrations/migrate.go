@@ -28,7 +28,8 @@ func Migrate(db *sqlx.DB) {
     migrations.SetupBooks(db)
 }
 
-func Setup(){
+func Setup() *sqlx.DB {
     db := CreateDB()
     Migrate(db)
+    return db
 }

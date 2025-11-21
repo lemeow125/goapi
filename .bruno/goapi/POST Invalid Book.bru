@@ -1,0 +1,18 @@
+meta {
+  name: POST Book
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8000/api/v1/books
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "title": "CR96kZU3wj28ZZbkti94Sg8TojiMHPwYHbWb0l30RT7xsBNcQbebUhuUTVmBoyMte",
+    "author": "CR96kZU3wj28ZZbkti94Sg8TojiMHPwYHbWb0l30RT7xsBNcQbebUhuUTVmBoyMte"
+  }
+}

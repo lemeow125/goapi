@@ -5,18 +5,21 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/jmoiron/sqlx"
 
+	books "github.com/lemeow125/goapi/internal/api/books"
 	goodbye "github.com/lemeow125/goapi/internal/api/goodbye"
 	hello "github.com/lemeow125/goapi/internal/api/hello"
 )
 
-func Run() {
+func Run(db *sqlx.DB) {
 	r := mux.NewRouter()
 	
 	api := r.PathPrefix("/api/v1").Subrouter()
 
 	hello.SetupRoutes(api)
 	goodbye.SetupRoutes(api)
+	books.SetupRoutes(api, db)
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
 		fmt.Fprint(w, "Up!")

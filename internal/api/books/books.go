@@ -1,17 +1,142 @@
 package books
 
 import (
-	"fmt"
+	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/jmoiron/sqlx"
 )
 
-func SetupRoutes(r *mux.Router) {
-	// GET Book
-	r.HandleFunc("/books/{name}", func(w http.ResponseWriter, r *http.Request){
-		vars := mux.Vars(r)
-		name := vars["name"]
-		fmt.Fprintf(w, "Book %s", name)
+type Book struct {
+    ID     int    `db:"id" json:"id"`
+    Title  string `db:"title" json:"title"`
+    Author string `db:"author" json:"author"`
+}
+
+type CreateBook struct {
+    Title  string `db:"title" json:"title"`
+    Author string `db:"author" json:"author"`
+}
+
+type ErrorResponse struct {
+    Error string `json:"error"`
+}
+
+func SetupRoutes(r *mux.Router, db *sqlx.DB) {
+	// GET Books
+	r.HandleFunc("/books", func(w http.ResponseWriter, r *http.Request){
+		w.Header().Set("Content-Type", "application/json")
+
+		rows, err := db.Query("SELECT * FROM Books")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		defer rows.Close()
+
+        var books []Book
+        for rows.Next() {
+            var book Book
+            err := rows.Scan(&book.ID, &book.Title, &book.Author)
+            if err != nil {
+                log.Fatal(err)
+            }
+            books = append(books, book)
+        }
+
+        json.NewEncoder(w).Encode(books)
+
 	}).Methods("GET")
+
+	// GET Book
+	r.HandleFunc("/books/{title}", func(w http.ResponseWriter, r *http.Request){
+        w.Header().Set("Content-Type", "application/json")
+
+		vars := mux.Vars(r)
+		title := vars["title"]
+
+		rows, err := db.Query("SELECT * FROM Books where Title = ?", title)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		defer rows.Close()
+
+        var books []Book
+        for rows.Next() {
+            var book Book
+            err := rows.Scan(&book.ID, &book.Title, &book.Author)
+            if err != nil {
+                log.Fatal(err)
+            }
+            books = append(books, book)
+        }
+
+
+        json.NewEncoder(w).Encode(books)
+
+	}).Methods("GET")
+
+	// POST Book
+	r.HandleFunc("/books", func(w http.ResponseWriter, r *http.Request){
+		w.Header().Set("Content-Type", "application/json")
+		var createBook CreateBook
+		err := json.NewDecoder(r.Body).Decode(&createBook)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+			return
+		}
+		
+
+		// DB Transaction
+		tx, err := db.Begin()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+			return
+		}
+		defer tx.Rollback()
+		
+		// Prepare INSERT
+		stmt, err := tx.Prepare("INSERT INTO Books(title, author) VALUES(?, ?)")
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+			return
+		}
+		defer stmt.Close()
+		// Execute INSERT
+		result, err := stmt.Exec(createBook.Title, createBook.Author)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+			return
+		}
+		
+		if err := tx.Commit(); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+			return
+		}
+
+		// Response
+		id, err := result.LastInsertId()
+		if err != nil {
+			log.Fatal(err)
+		}
+		
+		// Resconstruct JSON object
+		book := Book{
+			ID:     int(id),
+			Title:  createBook.Title,
+			Author: createBook.Author,
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(book)
+
+	}).Methods("POST")
 }

@@ -11,10 +11,9 @@ import (
 func SetupBooks(db *sqlx.DB) {
     query := `
     CREATE TABLE IF NOT EXISTS Books (
-        id INTEGER AUTO_INCREMENT NOT NULL,
-        title text NOT NULL, 
-        author text NOT NULL,
-        PRIMARY KEY (id)
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title text NOT NULL CHECK(length(title) > 0 AND length(title) < 64), 
+        author text NOT NULL CHECK(length(author) > 0 AND length(author) < 64)
     );
     `
 
