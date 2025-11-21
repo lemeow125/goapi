@@ -13,13 +13,15 @@ import (
 func Run() {
 	r := mux.NewRouter()
 	
-	hello.SetupRoutes(r)
-	goodbye.SetupRoutes(r)
+	api := r.PathPrefix("/api/v1").Subrouter()
+
+	hello.SetupRoutes(api)
+	goodbye.SetupRoutes(api)
 
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
 		fmt.Fprint(w, "Up!")
 	})
-	
+
 	fmt.Printf("Starting server...")
 	http.ListenAndServe(":8000", r)
 }

@@ -12,5 +12,5 @@ func SetupRoutes(r *mux.Router) {
 		vars := mux.Vars(r)
 		name := vars["name"]
 		fmt.Fprintf(w, "Goodbye %s!", name)
-	})
+	}).Methods("GET")
 }
