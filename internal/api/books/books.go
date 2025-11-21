@@ -108,6 +108,7 @@ func SetupRoutes(r *mux.Router, db *sqlx.DB) {
 			return
 		}
 		defer stmt.Close()
+		
 		// Execute INSERT
 		result, err := stmt.Exec(createBook.Title, createBook.Author)
 		if err != nil {
@@ -116,6 +117,7 @@ func SetupRoutes(r *mux.Router, db *sqlx.DB) {
 			return
 		}
 		
+		// Commit Transaction
 		if err := tx.Commit(); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
