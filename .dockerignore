@@ -1,0 +1,5 @@
+build/
+.bruno/
+.env
+.env.sample
+db.sqlite3

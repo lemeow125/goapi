@@ -1,0 +1,11 @@
+services:
+  # API
+  api:
+    env_file: .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: git.06222001.xyz/keannu125/goapi:latest
+    restart: always
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"

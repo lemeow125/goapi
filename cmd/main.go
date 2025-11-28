@@ -9,9 +9,9 @@ import (
 )
 func main(){
 	// Load .env
-	err := godotenv.Load("../.env")
+	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Warning: .env file not found, using environment variables")
 	}
 
 	// Migrations

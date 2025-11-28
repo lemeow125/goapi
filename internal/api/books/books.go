@@ -28,20 +28,25 @@ func SetupRoutes(r *mux.Router, db *sqlx.DB) {
 	// GET Books
 	r.HandleFunc("/books", func(w http.ResponseWriter, r *http.Request){
 		w.Header().Set("Content-Type", "application/json")
+		log.Println("/books")
 
 		rows, err := db.Query("SELECT * FROM Books")
 		if err != nil {
-			log.Fatal(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+			return
 		}
 
 		defer rows.Close()
 
-        var books []Book
+        books := []Book{}
         for rows.Next() {
             var book Book
             err := rows.Scan(&book.ID, &book.Title, &book.Author)
             if err != nil {
-                log.Fatal(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+				return
             }
             books = append(books, book)
         }
@@ -53,27 +58,31 @@ func SetupRoutes(r *mux.Router, db *sqlx.DB) {
 	// GET Book
 	r.HandleFunc("/books/{title}", func(w http.ResponseWriter, r *http.Request){
         w.Header().Set("Content-Type", "application/json")
+		log.Println("/books/{title}")
 
 		vars := mux.Vars(r)
 		title := vars["title"]
 
 		rows, err := db.Query("SELECT * FROM Books where Title = ?", title)
 		if err != nil {
-			log.Fatal(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+			return
 		}
 
 		defer rows.Close()
 
-        var books []Book
+		books := []Book{}
         for rows.Next() {
             var book Book
             err := rows.Scan(&book.ID, &book.Title, &book.Author)
             if err != nil {
-                log.Fatal(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
+				return
             }
             books = append(books, book)
         }
-
 
         json.NewEncoder(w).Encode(books)
 
