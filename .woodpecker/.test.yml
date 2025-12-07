@@ -5,7 +5,7 @@ steps:
   - name: test
     image: node:25-alpine3.22
     commands:
-      - npm install -g @usebruno/cli --cache /tmp/.npm
+      - npm install -g @usebruno/cli --cache /tmp/.npm --prefer-offline
       - cd .bruno/goapi && bru run --env goapi
     volumes:
       - /tmp/.npm:/tmp/.npm
