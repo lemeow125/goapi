@@ -43,12 +43,14 @@ depends_on:
 
 services:
   api:
-    image: git.06222001.xyz/keannu125/goapi
+    image: git.06222001.xyz/keannu125/goapi:latest
     environment:
       SQLITE_DB: "/tmp/db.sqlite3"
     commands:
       - sleep 10
       - cd /app
       - ./main
+    ports:
+      - "8000"
 
       
