@@ -47,7 +47,9 @@ services:
     environment:
       SQLITE_DB: "/tmp/db.sqlite3"
       BACKEND_PORT: 8000
-    ports: 
-      - "8015:8000"
+    commands:
+      - sleep 10
+      - cd /app
+      - ./main
 
       
