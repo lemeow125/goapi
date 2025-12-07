@@ -5,14 +5,61 @@ meta {
 }
 
 post {
-  url: http://localhost:8000/api/v1/books
+  url: http://{{HOST}}:{{PORT}}/api/v1/books
   body: json
   auth: none
 }
 
 body:json {
   {
-    "title": "Keannu",
-    "author": "Test Book"
+    "title": "{{RANDOM_TITLE}}",
+    "author": "{{RANDOM_AUTHOR}}"
   }
+}
+
+script:pre-request {
+  const randomTitle = bru.interpolate('{{$randomWords}}');
+  const randomAuthor = bru.interpolate('{{$randomFullName}}');
+  bru.setVar("RANDOM_TITLE", randomTitle);
+  bru.setVar("RANDOM_AUTHOR", randomAuthor);
+}
+
+script:post-response {
+  test("Book POST - HTTP 201", function () {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Book POST - JSON Response", function () {
+    const body = res.getBody();
+    expect(body).to.exist;
+  });
+  
+  test("Book POST - JSON Response All Fields Present", function () {
+    const body = res.getBody();
+    expect(body).to.exist.and.to.be.an('object').and.to.not.be.null;
+    expect(body).to.have.all.keys('id', 'title', 'author');
+  });
+  
+  test("Book POST - JSON Response ID Field", function () {
+    const body = res.getBody();
+    expect(typeof body.id).to.equal("number");
+  });
+  
+  test("Book POST - JSON Response Title Field", function () {
+    const body = res.getBody();
+    expect(body.title).to.be.a("string")
+    expect(body.title).to.not.be.empty
+    expect(body.title).to.eql(bru.getVar("RANDOM_TITLE"));
+  });
+  
+  test("Book POST - JSON Response Author Field", function () {
+    const body = res.getBody();
+    expect(body.author).to.be.a("string")
+    expect(body.author).to.not.be.empty
+    expect(body.author).to.eql(bru.getVar("RANDOM_AUTHOR"));
+  });
+  
+  bru.deleteVar("RANDOM_TITLE")
+  bru.deleteVar("RANDOM_AUTHOR")
+  
 }

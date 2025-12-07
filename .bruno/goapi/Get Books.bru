@@ -1,11 +1,31 @@
 meta {
-  name: Get Books
+  name: GET Books
   type: http
   seq: 1
 }
 
 get {
-  url: http://localhost:8000/api/v1/books
+  url: http://{{HOST}}:{{PORT}}/api/v1/books
   body: none
   auth: none
+}
+
+script:post-response {
+  test("Book GET - HTTP 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Book GET - JSON Response", function () {
+    const body = res.getBody();
+    expect(body).to.exist;
+  });
+  
+  test("Book GET - All Items Have Correct Data Types", function () {
+    const body = res.getBody();
+    body.forEach((item, index) => {
+      expect(item.id).to.be.a('number');
+      expect(item.title).to.be.a('string');
+      expect(item.author).to.be.a('string');
+    });
+  });
 }

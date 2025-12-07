@@ -5,14 +5,43 @@ meta {
 }
 
 post {
-  url: http://localhost:8000/api/v1/books
+  url: http://{{HOST}}:{{PORT}}/api/v1/books
   body: json
   auth: none
 }
 
 body:json {
   {
-    "title": "CR96kZU3wj28ZZbkti94Sg8TojiMHPwYHbWb0l30RT7xsBNcQbebUhuUTVmBoyMte",
-    "author": "CR96kZU3wj28ZZbkti94Sg8TojiMHPwYHbWb0l30RT7xsBNcQbebUhuUTVmBoyMte"
+    "title": "{{RANDOM_TITLE}}",
+    "author": "{{RANDOM_AUTHOR}}"
   }
+}
+
+script:pre-request {
+  const randomTitle = bru.interpolate('{{$randomLoremParagraph}}');
+  const randomAuthor = bru.interpolate('{{$randomLoremParagraph}}');
+  bru.setVar("RANDOM_TITLE", randomTitle);
+  bru.setVar("RANDOM_AUTHOR", randomAuthor);
+  
+}
+
+script:post-response {
+  test("Book POST - HTTP 400", function () {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("Book POST - JSON Response", function () {
+    const body = res.getBody();
+    expect(body).to.exist;
+  });
+  
+  test("Book POST - JSON Response All Fields Present", function () {
+    const body = res.getBody();
+    expect(body).to.exist.and.to.be.an('object').and.to.not.be.null;
+    expect(body).to.have.all.keys('error');
+  });
+  
+  bru.deleteVar("RANDOM_TITLE")
+  bru.deleteVar("RANDOM_AUTHOR")
+  
 }
