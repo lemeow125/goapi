@@ -43,7 +43,7 @@ services:
   api:
     image: git.06222001.xyz/keannu125/goapi
     environment:
-      SQLITE_DB: "..db/db.sqlite3"
+      SQLITE_DB: "/tmp/db.sqlite3"
       BACKEND_PORT: 8000
 
       
