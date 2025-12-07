@@ -3,8 +3,9 @@ labels:
 
 steps:
   - name: test
-    image: alpine/bruno:latest
+    image: node-20:alpine
     commands:
+      - npm install -g @usebruno/cli
       - cd .bruno/goapi && bru run --env goapi
   - name: discord
     image: appleboy/drone-discord
@@ -34,7 +35,6 @@ when:
       - push
       - manual
       - pull_request
-
 
 depends_on:
   - build
