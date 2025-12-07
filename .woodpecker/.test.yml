@@ -7,7 +7,7 @@ steps:
     commands:
       - npm install -g @usebruno/cli --cache /tmp/.npm --prefer-offline
       - sleep 10
-      - cd .bruno/goapi && bru run --env goapi
+      - cd .bruno/goapi && bru run --env goapi.docker
     volumes:
       - /tmp/.npm:/tmp/.npm
   - name: discord
