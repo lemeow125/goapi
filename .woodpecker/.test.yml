@@ -3,7 +3,7 @@ labels:
 
 steps:
   - name: test
-    image: node-20:alpine
+    image: node-25:alpine3.22
     commands:
       - npm install -g @usebruno/cli
       - cd .bruno/goapi && bru run --env goapi
