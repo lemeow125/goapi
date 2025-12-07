@@ -1,0 +1,27 @@
+root = "."
+tmp_dir = "build"
+
+[build]
+cmd = "make build"
+bin = "build/api"
+include_ext = ["env", "go", "toml"]
+exclude_dir = ["build"]
+stop_on_error = false
+
+[log]
+time = false
+main_only = false
+silent = false
+
+[color]
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+clean_on_exit = true
+
+[screen]
+clear_on_rebuild = true
+keep_scroll = true
