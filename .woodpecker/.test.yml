@@ -5,8 +5,10 @@ steps:
   - name: test
     image: node:25-alpine3.22
     commands:
-      - npm install -g @usebruno/cli
+      - npm install -g @usebruno/cli --cache /tmp/.npm
       - cd .bruno/goapi && bru run --env goapi
+    volumes:
+      - /tmp/.npm:/tmp/.npm
   - name: discord
     image: appleboy/drone-discord
     settings:
