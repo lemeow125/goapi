@@ -6,6 +6,7 @@ steps:
     image: node:25-alpine3.22
     commands:
       - npm install -g @usebruno/cli --cache /tmp/.npm --prefer-offline
+      - sleep 10
       - cd .bruno/goapi && bru run --env goapi
     volumes:
       - /tmp/.npm:/tmp/.npm
@@ -47,7 +48,6 @@ services:
     environment:
       SQLITE_DB: "/tmp/db.sqlite3"
     commands:
-      - sleep 10
       - cd /app
       - ./main
     ports:
