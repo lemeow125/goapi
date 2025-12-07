@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -25,7 +26,7 @@ func Run(db *sqlx.DB) {
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
 		fmt.Fprint(w, "Up!")
 	})
-
-	fmt.Printf("Starting server...")
+	
+	log.Default().Printf("Starting server...")
 	http.ListenAndServe(":"+PORT, r)
 }

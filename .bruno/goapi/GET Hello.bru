@@ -1,0 +1,32 @@
+meta {
+  name: GET Books
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://{{HOST}}:{{PORT}}/api/v1/hello/{{RANDOM_NAME}}
+  body: none
+  auth: none
+}
+
+script:pre-request {
+  const randomName = bru.interpolate('{{$randomFirstName}}');
+  bru.setVar("RANDOM_NAME", randomName);
+}
+
+script:post-response {
+  test("Hello GET - HTTP 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Hello GET - Response", function () {
+    const body = res.getBody();
+    expect(body).to.exist;
+  });
+  
+  test("Hello GET - Response String", function () {
+    const body = res.getBody();
+    expect(body).to.be.a("string")
+  });
+}

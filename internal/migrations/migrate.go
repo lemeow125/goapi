@@ -16,10 +16,11 @@ func CreateDB() *sqlx.DB{
     if err != nil {
         log.Fatal(err)
     }
+    if SQLITE_DB == ""  {
+        SQLITE_DB = "/tmp/db.sqlite3"
+        log.Default().Println("No SQLite DB specified, using ephemeral directory" + SQLITE_DB)
+    }
 
-    // Deferred exit
-    // defer db.Close()
-    
     return db
 }
 
