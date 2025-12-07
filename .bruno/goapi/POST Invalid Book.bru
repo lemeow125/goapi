@@ -35,7 +35,7 @@ script:post-response {
     expect(body).to.exist;
   });
   
-  test("Book POST - JSON Response All Fields Present", function () {
+  test("Book POST - JSON Response Error Field", function () {
     const body = res.getBody();
     expect(body).to.exist.and.to.be.an('object').and.to.not.be.null;
     expect(body).to.have.all.keys('error');
