@@ -46,7 +46,6 @@ services:
     image: git.06222001.xyz/keannu125/goapi
     environment:
       SQLITE_DB: "/tmp/db.sqlite3"
-      BACKEND_PORT: 8000
     commands:
       - sleep 10
       - cd /app

@@ -8,4 +8,4 @@ services:
     image: git.06222001.xyz/keannu125/goapi:latest
     restart: always
     ports:
-      - "${BACKEND_PORT}:${BACKEND_PORT}"
+      - "${BACKEND_PORT:-8000}:8000"

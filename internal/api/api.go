@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
@@ -14,7 +13,7 @@ import (
 )
 
 func Run(db *sqlx.DB) {
-	PORT := os.Getenv("BACKEND_PORT")
+	PORT := "8000"
 	r := mux.NewRouter()
 	
 	api := r.PathPrefix("/api/v1").Subrouter()

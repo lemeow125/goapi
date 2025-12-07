@@ -35,5 +35,8 @@ COPY --from=builder --chown=appuser:appgroup /app/main /app/main
 # Switch to non-root user
 USER appuser
 
+# Expose default port
+EXPOSE 8000
+
 # Run the binary
 ENTRYPOINT ["/app/main"]
