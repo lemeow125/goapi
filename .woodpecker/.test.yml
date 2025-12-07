@@ -42,3 +42,8 @@ depends_on:
 services:
   api:
     image: git.06222001.xyz/keannu125/goapi:latest
+    environment:
+      SQLITE_DB: "..db/db.sqlite3"
+      BACKEND_PORT: 8000
+
+      
