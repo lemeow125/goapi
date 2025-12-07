@@ -1,20 +1,39 @@
-# Use the official Golang image as a base
-FROM golang:alpine
+# Stage 1: Build the Go binary
+FROM golang:alpine AS builder
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy the Go modules to the working directory
-COPY go.mod ./
+# Copy go.mod and go.sum (if exists) for dependency caching
+COPY go.mod go.sum ./
+RUN go mod download && go mod verify
 
-# Install the dependencies
-RUN go mod download
-
-# Copy the rest of the code to the working directory
+# Copy source code
 COPY . .
 
-# Build the executable
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/main ./cmd
+# Build the application with optimizations
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build \
+    -ldflags="-w -s" \
+    -trimpath \
+    -o /app/main \
+    ./cmd
 
-# Run the command when the container starts
-CMD ["./build/main"]
+# Stage 2: Create minimal runtime image
+FROM alpine:latest
+
+RUN apk add --no-cache ca-certificates tzdata
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G appgroup
+
+WORKDIR /app
+
+# Copy the binary from builder stage
+COPY --from=builder --chown=appuser:appgroup /app/main /app/main
+
+# Switch to non-root user
+USER appuser
+
+# Run the binary
+ENTRYPOINT ["/app/main"]

@@ -3,3 +3,4 @@ build/
 .env
 .env.sample
 db.sqlite3
+.woodpecker
