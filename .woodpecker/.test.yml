@@ -45,7 +45,5 @@ services:
     environment:
       SQLITE_DB: "..db/db.sqlite3"
       BACKEND_PORT: 8000
-    commands: ./build/cmd.main
-
 
       
