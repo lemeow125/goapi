@@ -5,16 +5,13 @@ steps:
   - name: deploy
     image: alpine:latest
     environment:
-      SSH_HOST:
-        from_secret: SSH_HOST
-      PROJECT_DIRECTORY:
-        from_secret: PROJECT_DIRECTORY
       SSH_KEY:
         from_secret: SSH_KEY
       REGISTRY_IMAGE_TAG:
         from_secret: REGISTRY_IMAGE_TAG
-      DOCKER_COMPOSE_URL:
-        from_secret: DOCKER_COMPOSE_URL
+      SSH_HOST: root@10.0.10.115
+      PROJECT_DIRECTORY: /mnt/nvme/files/docker\ projects/auxoscloud_fastapi
+      DOCKER_COMPOSE_URL: https://git.06222001.xyz/keannu125/GoAPI/raw/branch/master/docker-compose.yml
     commands:
       - apk add openssh
       - mkdir -p /root/.ssh/
