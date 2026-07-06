@@ -4,6 +4,7 @@ steps:
     commands:
       - npm install -g @usebruno/cli --cache /tmp/.npm --prefer-offline
       - cd .bruno
+      - sleep 10
       - bru run --env goapi.docker
     volumes:
       - /tmp/.npm:/tmp/.npm

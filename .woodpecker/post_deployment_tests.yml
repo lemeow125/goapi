@@ -3,7 +3,6 @@ steps:
     image: node:25-alpine3.22
     commands:
       - npm install -g @usebruno/cli --cache /tmp/.npm --prefer-offline
-      - echo "Running development tests"
       - cd .bruno 
       - bru run --env goapi.dev
     volumes:
