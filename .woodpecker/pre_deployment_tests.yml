@@ -18,6 +18,3 @@ depends_on:
 services:
   api:
     image: git.06222001.xyz/keannu125/goapi:latest
-    commands:
-      - cd /app
-      - ./main
