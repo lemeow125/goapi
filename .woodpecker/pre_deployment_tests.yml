@@ -1,15 +1,10 @@
-matrix:
-  BRUNO_TEST_DIR:
-    - books
-    - hello
-
 steps:
   - name: run pre-deployment tests
     image: ghcr.io/usebruno/cli:3.5.1-alpine
     commands:
       - cd .bruno
       - sleep 10
-      - bru run --env goapi.docker $BRUNO_TEST_DIR
+      - bru run --env goapi.docker
       
 when:
   - branch: master
