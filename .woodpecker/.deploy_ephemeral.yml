@@ -10,7 +10,7 @@ steps:
       REGISTRY_IMAGE_TAG:
         from_secret: REGISTRY_IMAGE_TAG
       SSH_HOST: root@10.0.10.115
-      PROJECT_DIRECTORY: /mnt/nvme/files/docker\ projects/auxoscloud_fastapi
+      PROJECT_DIRECTORY: /mnt/nvme/files/docker\ projects/goapi
       DOCKER_COMPOSE_URL: https://git.06222001.xyz/keannu125/GoAPI/raw/branch/master/docker-compose.yml
     commands:
       - apk add openssh
