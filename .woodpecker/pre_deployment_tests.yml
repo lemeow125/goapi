@@ -1,34 +1,15 @@
+matrix:
+  BRUNO_TEST_DIR:
+    - books
+    - hello
+
 steps:
-  - name: bruno_tests
-    image: node:25-alpine3.22
+  - name: run pre-deployment tests
+    image: ghcr.io/usebruno/cli:3.5.1-alpine
     commands:
-      - npm install -g @usebruno/cli --cache /tmp/.npm --prefer-offline
       - cd .bruno
       - sleep 10
-      - bru run --env goapi.docker
-    volumes:
-      - /tmp/.npm:/tmp/.npm
-  - name: discord
-    image: appleboy/drone-discord
-    settings:
-      webhook_id:
-        from_secret: DISCORD_WEBHOOK_ID
-      webhook_token:
-        from_secret: DISCORD_WEBHOOK_TOKEN
-      message: >
-        {{#success build.status}}
-          ✅ [{{repo.name}}] Successful test for build #{{build.number}}
-          Branch: {{commit.branch}}
-          Commit: {{commit.sha}}:{{commit.message}}
-          By: {{commit.author}}
-        {{else}}
-          ❌ [{{repo.name}}] Failed test for build #{{build.number}}
-          Branch: {{commit.branch}}
-          Commit: {{commit.sha}}:{{commit.message}}
-          By: {{commit.author}}
-        {{/success}}
-    when:
-      status: [ success, failure ]
+      - bru run --env goapi.docker $BRUNO_TEST_DIR
       
 when:
   - branch: master
