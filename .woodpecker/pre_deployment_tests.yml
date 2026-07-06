@@ -26,5 +26,3 @@ services:
     commands:
       - cd /app
       - ./main
-    ports:
-      - "8000"
