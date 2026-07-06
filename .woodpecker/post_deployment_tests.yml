@@ -1,6 +1,6 @@
 steps:
-  - name: test
-    image: node:23-alpine
+  - name: bruno_tests
+    image: node:25-alpine3.22
     commands:
       - npm install -g @usebruno/cli --cache /tmp/.npm --prefer-offline
       - echo "Running development tests"
@@ -12,22 +12,21 @@ steps:
     image: appleboy/drone-discord
     settings:
       webhook_id:
-        from_secret: SERVICE_QUEUE_DISCORD_WEBHOOK_ID
+        from_secret: DISCORD_WEBHOOK_ID
       webhook_token:
-        from_secret: SERVICE_QUEUE_DISCORD_WEBHOOK_TOKEN
+        from_secret: DISCORD_WEBHOOK_TOKEN
       message: >
         {{#success build.status}}
-          ✅ [{{repo.name}}] Successful post-deployment tests for build #{{build.number}}
+          ✅ [{{repo.name}}] Successful test for build #{{build.number}}
           Branch: {{commit.branch}}
           Commit: {{commit.sha}}:{{commit.message}}
           By: {{commit.author}}
         {{else}}
-          ❌ [{{repo.name}}] Failed post-deployment tests for build #{{build.number}}
+          ❌ [{{repo.name}}] Failed test for build #{{build.number}}
           Branch: {{commit.branch}}
           Commit: {{commit.sha}}:{{commit.message}}
           By: {{commit.author}}
         {{/success}}
-    depends_on: test
     when:
       status: [ success, failure ]
       

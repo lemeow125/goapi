@@ -1,13 +1,10 @@
-labels:
-  platform: linux/amd64
-
 steps:
-  - name: test
+  - name: bruno_tests
     image: node:25-alpine3.22
     commands:
       - npm install -g @usebruno/cli --cache /tmp/.npm --prefer-offline
-      - sleep 10
-      - cd .bruno/goapi && bru run --env goapi.docker
+      - cd .bruno
+      - bru run --env goapi.docker
     volumes:
       - /tmp/.npm:/tmp/.npm
   - name: discord
