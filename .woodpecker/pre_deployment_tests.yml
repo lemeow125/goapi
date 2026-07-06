@@ -49,6 +49,3 @@ services:
       - ./main
     ports:
       - "8000"
-
-depends_on:
-  - build
