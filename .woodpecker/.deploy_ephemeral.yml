@@ -65,6 +65,6 @@ when:
 
 depends_on:
   - build
-  - test
+  - pre_deployment_tests
 
 skip_clone: true
